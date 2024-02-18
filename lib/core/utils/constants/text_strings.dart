@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 /// This class contains all the App Text in String formats.
 class TTexts {
-
   // -- GLOBAL Texts
   static String and = "and".tr;
   static String skip = "skip".tr;
@@ -11,7 +10,6 @@ class TTexts {
   static String submit = "submit".tr;
   static String appName = "appName".tr;
   static String tContinue = "ALZContinue".tr;
-
   // -- OnBoarding Texts
   static String onBoardingTitle1 = "onBoardingTitle1".tr;
   static String onBoardingTitle2 = "onBoardingTitle2".tr;
@@ -19,7 +17,6 @@ class TTexts {
   static String onBoardingSubTitle1 = "onBoardingSubTitle1".tr;
   static String onBoardingSubTitle2 = "onBoardingSubTitle2".tr;
   static String onBoardingSubTitle3 = "onBoardingSubTitle3".tr;
-
   // -- Authentication Forms
   static  String firstName = "firstName".tr;
   static  String lastName = "firstName".tr;
@@ -28,7 +25,7 @@ class TTexts {
   static  String password = "password".tr;
   static  String confirmpassword = "confirmpassword".tr;
   static  String newPassword = "New Password".tr;
-  static  String username = "Username".tr;
+  static  String username = "username".tr;
   static  String phoneNo = "Phone Number".tr;
   static  String rememberMe = "rememberMe".tr;
   static  String forgetPassword = "forgetPassword".tr;
@@ -36,12 +33,12 @@ class TTexts {
   static  String createAccount = "createAccount".tr;
   static  String orSignInWith = "orSignInWith".tr;
   static  String orSignUpWith = "orSignUpWith".tr;
-
   static  String iAgreeTo = "iAgreeTo".tr;
-  static  String privacyPolicy = "Privacy Policy".tr;
-  static  String termsOfUse = "Terms of use".tr;
+  static  String privacyPolicy = "privacyPolicy".tr;
+
+  static  String termsOfUse = "termsOfUse".tr;
   static  String verificationCode = "verificationCode".tr;
-  static  String resendEmail = "Resend Email".tr;
+  static  String resendEmail = "resendEmail".tr;
   static  String resendEmailIn = "Resend email in".tr;
   // -- Authentication Headings
   static  String loginTitle = "Welcome";
@@ -56,7 +53,7 @@ class TTexts {
   static  String emailNotReceivedMessage = "Didn’t get the email? Check your junk/spam or resend it.";
   static  String yourAccountCreatedTitle = "Your account successfully created!";
   static  String yourAccountCreatedSubTitle = "Welcome to Your Ultimate Shopping Destination: Your Account is Created, Unleash the Joy of Seamless Online Shopping!";
-
+  // -- Validation Error Messages
 
 
 }

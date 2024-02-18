@@ -1,129 +1,110 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../core/utils/constants/colors.dart';
 import '../../../../../core/utils/constants/image_strings.dart';
 import '../../../../../core/utils/constants/sizes.dart';
 import '../../../../../core/utils/constants/text_strings.dart';
 import '../../../../../core/utils/helpers/helper_functions.dart';
-class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
+ import '../../../../controller/auth/signp_controller.dart';
+import '../../../../core/utils/validators/validation.dart';
 
-  @override
-  SignUpState createState() => SignUpState();
-}
+class SignUpPage extends StatelessWidget {
+  final SignUpController signUpController = Get.put(SignUpController());
 
-class SignUpState extends State<SignUp> {
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
-  bool _isChecked = false;
+  SignUpPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var dark = THelperFunctions.isDarkMode(context);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: dark ? Colors.white : Colors.black),
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22,vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              /// Title
               Text(
                 TTexts.signupTitle,
-                style: Theme.of(context).textTheme.headlineMedium,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
-
-              ///Form
-              Form(
+              Form(key: signUpController.formKey.value,
                 child: Column(
                   children: [
-                    TextFormField(
-                      expands: false,
-                      decoration:  InputDecoration(
+                     TextFormField(
+                      validator: TValidator.validateUsername,
+                      decoration: InputDecoration(
                         labelText: TTexts.username,
-                        prefixIcon: Icon(Iconsax.user),
+                        prefixIcon: const Icon(Iconsax.user),
                       ),
                     ),
                     const SizedBox(height: TSizes.spaceBtwInputFields),
-                    TextFormField(
-                      expands: false,
-                      decoration:  InputDecoration(
+                     TextFormField(
+                      keyboardType: TextInputType.number,
+                      maxLength: 14,
+                      validator: TValidator.validateSsn,
+                      decoration: InputDecoration(
                         labelText: TTexts.ssn,
-                        prefixIcon: Icon(Iconsax.card),
+                        prefixIcon: const Icon(Iconsax.card),
+                        counterText: '',
                       ),
                     ),
                     const SizedBox(height: TSizes.spaceBtwInputFields),
-                    TextFormField(
-                      expands: false,
-                      decoration:  InputDecoration(
+                     TextFormField(
+                      validator: TValidator.validateEmail,
+                      decoration: InputDecoration(
                         labelText: TTexts.email,
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
-                    ),
+                        prefixIcon: const Icon(Icons.email_outlined),
+                      )),
                     const SizedBox(height: TSizes.spaceBtwInputFields),
-                    TextFormField(
-                      expands: false,
-                      obscureText: !_isPasswordVisible,
+                    Obx(() => TextFormField(
+                      controller: signUpController.passwordController.value,
+                      validator: TValidator.validatePassword,
+                      obscureText: !signUpController.isPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: TTexts.password,
                         prefixIcon: const Icon(Iconsax.password_check),
                         suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible
-                                ?  Iconsax.eye
-                                : Iconsax.eye_slash,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
+                          icon: Icon(signUpController.isPasswordVisible.value ? Iconsax.eye : Iconsax.eye_slash),
+                          onPressed: signUpController.togglePasswordVisibility,
                         ),
                       ),
-                    ),
+                    )),
                     const SizedBox(height: TSizes.spaceBtwInputFields),
-                    TextFormField(
-                      expands: false,
-                      obscureText: !_isConfirmPasswordVisible,
+                    Obx(() => TextFormField(
+                      validator: (value) {
+                        if (value != signUpController.passwordController.value.text) {
+                          return 'Passwords do not match.';
+                        }
+                        return null;
+                      },
+                      obscureText: !signUpController.isConfirmPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: TTexts.confirmpassword,
                         prefixIcon: const Icon(Iconsax.password_check),
                         suffixIcon: IconButton(
-                          icon: Icon(
-                            _isConfirmPasswordVisible
-                                ?  Iconsax.eye
-                                : Iconsax.eye_slash,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isConfirmPasswordVisible =
-                              !_isConfirmPasswordVisible;
-                            });
-                          },
+                          icon: Icon(signUpController.isConfirmPasswordVisible.value ? Iconsax.eye : Iconsax.eye_slash),
+                          onPressed: signUpController.toggleConfirmPasswordVisibility,
                         ),
                       ),
-                    ),
+                    )),
                   ],
                 ),
               ),
-
-              ///Else
               const SizedBox(height: TSizes.spaceBtwInputFields),
-              Row(
+              Obx(() => Row(
                 children: [
                   SizedBox(
                     width: 20,
                     height: 20,
                     child: Checkbox(
-                      value: _isChecked,
-                      onChanged: (value) {
-                        setState(() {
-                          _isChecked = value!;
-                        });
-                      },
+                      value: signUpController.isChecked.value,
+                      onChanged: signUpController.toggleCheckbox,
                     ),
                   ),
                   const SizedBox(width: TSizes.spaceBtwItems),
@@ -132,50 +113,43 @@ class SignUpState extends State<SignUp> {
                       children: [
                         TextSpan(
                           text: "${TTexts.iAgreeTo} ",
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         TextSpan(
                           text: TTexts.privacyPolicy,
-                          style:
-                          Theme.of(context).textTheme.bodyMedium!.apply(
+                          style: Theme.of(context).textTheme.bodyMedium!.apply(
                             color: dark ? TColors.white : TColors.primary,
                             decoration: TextDecoration.underline,
-                            decorationColor:
-                            dark ? TColors.white : TColors.primary,
                           ),
                         ),
                         TextSpan(
                           text: " ${TTexts.and} ",
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         TextSpan(
                           text: TTexts.termsOfUse,
-                          style:
-                          Theme.of(context).textTheme.bodyMedium!.apply(
+                          style: Theme.of(context).textTheme.bodyMedium!.apply(
                             color: dark ? TColors.white : TColors.primary,
                             decoration: TextDecoration.underline,
-                            decorationColor:
-                            dark ? TColors.white : TColors.primary,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
-              ),
+              )),
               const SizedBox(height: TSizes.spaceBtwSections),
-
-              /// Sign In button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
-                  child:   Text(TTexts.createAccount),
+                  onPressed: () {
+
+                    signUpController.signUp();
+                  },
+                  child: Text(TTexts.createAccount),
                 ),
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
-
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -189,7 +163,7 @@ class SignUpState extends State<SignUp> {
                   ),
                   Text(
                     TTexts.orSignUpWith,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Flexible(
                     child: Divider(
@@ -201,10 +175,7 @@ class SignUpState extends State<SignUp> {
                   ),
                 ],
               ),
-
-              /// Footer
               const SizedBox(height: TSizes.spaceBtwSections),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -238,7 +209,6 @@ class SignUpState extends State<SignUp> {
                     ),
                   ),
                   const SizedBox(width: TSizes.spaceBtwItems),
-
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: TColors.grey),
@@ -253,7 +223,6 @@ class SignUpState extends State<SignUp> {
                       ),
                     ),
                   ),
-
                 ],
               )
             ],

@@ -1,5 +1,6 @@
 
 class TValidator {
+
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required.';
@@ -19,10 +20,13 @@ class TValidator {
     if (value == null || value.isEmpty) {
       return 'Password is required.';
     }
-
+    // Check for spaces
+    if (value.contains(RegExp(r'\s'))) {
+      return 'Password cannot contain spaces.';
+    }
     // Check for minimum password length
     if (value.length < 6) {
-      return 'Password must be at least 6 characters long.';
+      return 'Password must be at least 6 characters.';
     }
 
     // Check for uppercase letters
@@ -39,6 +43,8 @@ class TValidator {
     if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       return 'Password must contain at least one special character.';
     }
+
+
 
     return null;
   }
@@ -58,5 +64,33 @@ class TValidator {
     return null;
   }
 
+  static String? validateSsn(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'SSN is required.';
+    }
+
+    // Check if the value consists only of digits and has a length of 14
+    if (value.length != 14 || !value.contains(RegExp(r'^\d+$'))) {
+      return 'Invalid SSN format (14 digits required).';
+    }
+
+    return null;
+  }
+
+  static String? validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Username is required.';
+    }
+
+    // Check if the username contains any whitespace
+    if (value.contains(RegExp(r'\s'))) {
+      return 'Username cannot contain whitespace.';
+    }
+
+    return null;
+  }
+
+
 // Add more custom validators as needed for your specific requirements.
+
 }

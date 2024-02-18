@@ -7,222 +7,218 @@ import '../../../../../core/utils/constants/image_strings.dart';
 import '../../../../../core/utils/constants/sizes.dart';
 import '../../../../../core/utils/constants/text_strings.dart';
 import '../../../../../core/utils/helpers/helper_functions.dart';
+import '../../../../controller/auth/login_controller.dart';
+import '../../../../core/utils/validators/validation.dart';
 import '../password_configiration/forget_password.dart';
-import '../signup/sign_up.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
-  @override
-  LoginPageState createState() => LoginPageState();
-}
-
-class LoginPageState extends State<LoginPage> {
-  bool _obscurePassword = true;
-  bool _rememberMe = false;
-
+class LoginPage extends StatelessWidget {
+  final LoginController _loginController = Get.put(LoginController());
+   LoginPage({super.key});
   @override
   Widget build(BuildContext context) {
     var dark = THelperFunctions.isDarkMode(context);
-
     return Scaffold(
-      body: SingleChildScrollView(
+        body: SingleChildScrollView(
         child: Padding(
-          padding: TSpacingStyle.paddingWithAppBarHight,
-          child: Column(
+        padding: TSpacingStyle.paddingWithAppBarHight,
+        child: Obx(() => Form(
+      key: _loginController.formKey.value,
+      child: Column(
+        children: [
+          // Logo title subtitle
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Logo title subtitle
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Image(
-                      height: 120,
-                      image: AssetImage(dark ? TImages.lightAppLogo : TImages.darkAppLogo),
-                    ),
-                  ),
-                  Text(
-                    TTexts.loginTitle,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: TSizes.sm),
-                  Text(
-                    TTexts.loginSubTitle,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
+              Center(
+                child: Image(
+                  height: 120,
+                  image: AssetImage(dark ? TImages.lightAppLogo : TImages.darkAppLogo),
+                ),
               ),
+              Text(
+                TTexts.loginTitle,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: TSizes.sm),
+              Text(
+                TTexts.loginSubTitle,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
 
-              /// Form
-              Form(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: TSizes.spaceBtwSections),
-                  child: Column(
-                    children: [
-                      /// SSN TEXTFORMFIELD
-                      TextFormField(
-                        decoration:  InputDecoration(
-                          prefixIcon: Icon(Iconsax.card),
-                          labelText: TTexts.ssn,
+          // Form
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: TSizes.spaceBtwSections),
+            child: Column(
+              children: [
+                // SSN TEXTFORMFIELD
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  maxLength: 14,
+                  validator: TValidator.validateSsn, // Validation for SSN
+                  decoration: InputDecoration(
+                    labelText: TTexts.ssn,
+                    prefixIcon: const Icon(Iconsax.card),
+                    counterText: '', // Clear default counter text
+                  ),
+                ),
+                const SizedBox(height: TSizes.spaceBtwInputFields),
+
+                // Password TEXTFORMFIELD
+                TextFormField(
+                  validator: TValidator.validatePassword, // Validation for password
+                  obscureText: _loginController.obscurePassword.value,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.password_outlined),
+                    suffixIcon: IconButton(
+                      icon: Icon(_loginController.obscurePassword.value ? Iconsax.eye_slash : Iconsax.eye),
+                      onPressed: _loginController.togglePasswordVisibility,
+                    ),
+                    labelText: TTexts.password,
+                  ),
+                ),
+                const SizedBox(height: TSizes.spaceBtwInputFields / 2),
+
+                // Remember me & Forget Password
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Remember me
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _loginController.rememberMe.value,
+                          onChanged: _loginController.toggleRememberMe,
                         ),
-                      ),
-                      const SizedBox(height: TSizes.spaceBtwInputFields),
+                        Text(TTexts.rememberMe),
+                      ],
+                    ),
 
-                      /// Password TEXTFORMFIELD
-                      TextFormField(
-                        obscureText: _obscurePassword,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.password_outlined),
-                          suffixIcon: IconButton(
-                            icon: Icon(_obscurePassword ? Iconsax.eye_slash : Iconsax.eye),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          ),
-                          labelText: TTexts.password,
-                        ),
-                      ),
-                      const SizedBox(height: TSizes.spaceBtwInputFields / 2),
+                    // Forget Password
+                    TextButton(
+                      onPressed: () {
+                        Get.to(const ForgetPassword());
+                      },
+                      child: Text(TTexts.forgetPassword),
+                    ),
+                  ],
+                ),
 
-                      /// Remember me & Forget Password
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          /// Remember me
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: _rememberMe,
-                                onChanged: (val) {
-                                  setState(() {
-                                    _rememberMe = val!;
-                                  });
-                                },
-                              ),
-                               Text(TTexts.rememberMe),
-                            ],
-                          ),
+                const SizedBox(height: TSizes.spaceBtwSections),
 
-                          /// Forget Password
-                          TextButton(
-                            onPressed: () {Get.to(const ForgetPassword());},
-                            child:  Text(TTexts.forgetPassword),
-                          ),
-                        ],
-                      ),
+                // Sign In button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed:() {
+                     // _loginController.signIn,
+                      Get.offAllNamed("/homeScreen");
+                    },
+                    child: Text(TTexts.signIn),
+                  ),
+                ),
 
-                      const SizedBox(height: TSizes.spaceBtwSections),
+                const SizedBox(height: TSizes.spaceBtwItems),
 
-                      /// Sign In button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child:  Text(TTexts.signIn),
-                        ),
-                      ),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Get.toNamed("/signup");
+                    },
+                    child: Text(TTexts.createAccount),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-                      const SizedBox(height: TSizes.spaceBtwItems),
+          // Divider
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Divider(
+                  color: dark ? TColors.darkGrey : TColors.grey,
+                  thickness: 0.5,
+                  indent: 60,
+                  endIndent: 5,
+                ),
+              ),
+              Text(
+                TTexts.orSignInWith,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              Flexible(
+                child: Divider(
+                  color: dark ? TColors.darkGrey : TColors.grey,
+                  thickness: 0.5,
+                  indent: 5,
+                  endIndent: 60,
+                ),
+              ),
+            ],
+          ),
 
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Get.to(const SignUp());
-                          },
-                          child:   Text(TTexts.createAccount),
-                        ),
-                      ),
-                    ],
+          // Footer
+          const SizedBox(height: TSizes.spaceBtwSections),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: TColors.grey),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Image(
+                    width: TSizes.iconMd,
+                    height: TSizes.iconMd,
+                    image: AssetImage(TImages.google),
                   ),
                 ),
               ),
-
-              /// Divider
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Divider(
-                      color: dark ? TColors.darkGrey : TColors.grey,
-                      thickness: 0.5,
-                      indent: 60,
-                      endIndent: 5,
-                    ),
+              const SizedBox(width: TSizes.spaceBtwItems),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: TColors.grey),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Image(
+                    width: TSizes.iconMd,
+                    height: TSizes.iconMd,
+                    image: AssetImage(TImages.facebook),
                   ),
-                  Text(
-                    TTexts.orSignInWith,
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  Flexible(
-                    child: Divider(
-                      color: dark ? TColors.darkGrey : TColors.grey,
-                      thickness: 0.5,
-                      indent: 5,
-                      endIndent: 60,
-                    ),
-                  ),
-                ],
+                ),
               ),
-
-              /// Footer
-              const SizedBox(height: TSizes.spaceBtwSections),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: TColors.grey),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: const Image(
-                        width: TSizes.iconMd,
-                        height: TSizes.iconMd,
-                        image: AssetImage(TImages.google),
-                      ),
-                    ),
+              const SizedBox(width: TSizes.spaceBtwItems),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: TColors.grey),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Image(
+                    width: TSizes.iconMd,
+                    height: TSizes.iconMd,
+                    image: AssetImage(TImages.appleLogo),
                   ),
-                  const SizedBox(width: TSizes.spaceBtwItems),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: TColors.grey),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: const Image(
-                        width: TSizes.iconMd,
-                        height: TSizes.iconMd,
-                        image: AssetImage(TImages.facebook),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: TSizes.spaceBtwItems),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: TColors.grey),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: const Image(
-                        width: TSizes.iconMd,
-                        height: TSizes.iconMd,
-                        image: AssetImage(TImages.appleLogo),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+                ),
+              ),
             ],
-          ),
-        ),
+          )
+        ],
       ),
-    );
+    ),
+    ),
+    ),
+    ));
   }
 }
+
